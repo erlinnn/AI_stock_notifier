@@ -1,16 +1,16 @@
-name: Daily Stock Notifier
+name: Run Daily
 
 on:
+  workflow_dispatch:  # 👈 This line allows manual trigger from GitHub UI
   schedule:
-    - cron: '0 2 * * *'  # Runs every day at 7:30 AM IST (2:00 UTC)
-  workflow_dispatch:
+    - cron: '30 2 * * *'  # original daily schedule (2:30 AM UTC / 8:00 AM IST)
 
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -20,8 +20,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        python -m spacy download en_core_web_sm
+        pip install -r 'News fetcher/requirements.txt'
 
-    - name: Run the script
-      run: python news_fetcher.py
+    - name: Run news fetcher
+      run: |
+        python 'News fetcher/news_fetcher.py'
