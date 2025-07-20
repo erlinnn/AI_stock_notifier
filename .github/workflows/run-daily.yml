@@ -29,4 +29,5 @@ jobs:
 
     - name: Run Stock Notifier
       run: |
-        python your_script.py
+        python stock_notifier.py
+
