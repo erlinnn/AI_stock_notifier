@@ -4,21 +4,32 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import spacy
 
-# Load spaCy for NER
+# Load spaCy and FinBERT
 nlp = spacy.load("en_core_web_sm")
-
-# Load FinBERT
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Device set to use {device}")
 tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
 model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert").to(device)
 
-# Map sentiment to action
+# Telegram Bot Config
+BOT_TOKEN = '7625630100:AAH5BLFfE0Egm-EKcFakBTSdN5sgAGChX1E'
+CHAT_ID = '5562463187'
+
+# Sentiment to action map
 label_map = {
     "positive": ("BUY", "🟢"),
     "neutral": ("HOLD", "🟡"),
     "negative": ("SELL", "🔴")
 }
+
+def send_telegram_alert(stock_name, reason):
+    message = f"📈 BUY Signal Detected for {stock_name}!\nReason: {reason}"
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    data = {'chat_id': CHAT_ID, 'text': message}
+    response = requests.post(url, data=data)
+    if response.status_code == 200:
+        print("✅ Telegram Alert Sent!")
+    else:
+        print("❌ Failed to send alert:", response.text)
 
 def fetch_headlines():
     urls = {
@@ -33,7 +44,6 @@ def fetch_headlines():
             r = requests.get(url, timeout=10)
             soup = BeautifulSoup(r.text, "html.parser")
             tags = soup.find_all("a")
-
             for tag in tags:
                 text = tag.get_text(strip=True)
                 if 10 < len(text) < 200:
@@ -67,12 +77,16 @@ def main():
     for idx, headline in enumerate(headlines, 1):
         sentiment = analyze_sentiment(headline)
         action, symbol = label_map[sentiment]
-
         companies = extract_company_names(headline)
+
+        print(f"{idx:02d}. {headline}\n   ➤ Sentiment: {sentiment.capitalize()} → {action} {symbol}")
+
+        # Save only if company names are found
         for company in companies:
             stock_recommendations[company] = (sentiment, action, symbol)
-
-        print(f"{idx:02d}. {headline}\n   ➤ Sentiment: {sentiment.capitalize()} → {action} {symbol}\n")
+            # Send Telegram alert for BUY
+            if action == "BUY":
+                send_telegram_alert(company, headline)
 
     if stock_recommendations:
         print("\n📊 Summary of Recommended Actions:")
