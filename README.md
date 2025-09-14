@@ -14,6 +14,6 @@ Reason: Stock hit 52-week highs & rallied up to 30% in a month.
 
 ### 👨‍💻 Author
 Built with ❤️ by **Sumukh R**  
-3rd Year AI & ML Engineering Student  
+AI & ML Engineering Student  
 
 ⚠️ Disclaimer: Learning project only, not financial advice.
