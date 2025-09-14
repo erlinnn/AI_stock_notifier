@@ -1,4 +1,4 @@
-# AI Stock Notifier
+# 📈 AI Stock Notifier
 
 An AI-powered experiment that reads Indian financial news daily and detects BUY signals for NSE/BSE stocks.  
 It is not meant for direct trading but shows how AI and automation can turn raw news into useful insights.  
@@ -21,8 +21,8 @@ Python, spaCy, GitHub Actions, Telegram Bot API
 I wanted to combine AI with real-world finance and show how automation can help in daily decision making.  
 This is a serious AI experiment to showcase my skills in AI/ML, automation, and practical problem solving for recruiters and interviewers.  
 
-### Author
-Built by Sumukh R  
+### 👨‍💻 Author
+Built with ❤️ by **Sumukh R**  
 3rd Year AI & ML Engineering Student  
 
-Disclaimer: This is for learning and research only. It is not financial advice.
+⚠️ Disclaimer: This is for learning and research only. It is **not financial advice**.
