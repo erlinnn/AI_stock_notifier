@@ -3,7 +3,7 @@
 AI tool that scans news and sends **daily stock BUY alerts** before the Indian market opens.
 
 ### 🔑 Main Features
-- Runs **daily at 7:30 AM IST** with GitHub Actions  
+- Runs **daily between 8:00 and 8:30 AM IST** with GitHub Actions  
 - Reads finance news and checks sentiment using **AI + NLP (spaCy)**  
 - Sends instant **BUY alerts to Telegram**  
 - Focused on **Indian share market (NSE/BSE)**  
