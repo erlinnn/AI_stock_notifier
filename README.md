@@ -23,6 +23,6 @@ This is a serious AI experiment to showcase my skills in AI/ML, automation, and 
 
 ### 👨‍💻 Author
 Built with ❤️ by **Sumukh R**  
-3rd Year AI & ML Engineering Student  
+AI & ML Engineering Student  
 
 ⚠️ Disclaimer: This is for learning and research only. It is **not financial advice**.
