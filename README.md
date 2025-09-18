@@ -14,6 +14,11 @@ It is not meant for direct trading but shows how AI and automation can turn raw 
 BUY Signal Detected for Fortis Healthcare!  
 Reason: Stock hit 52-week highs and rallied up to 30% in a month.  
 
+## 📸 Screenshots / Demo
+<img width="1831" height="1079" alt="image" src="https://github.com/user-attachments/assets/328a77ff-2827-455c-9019-7327bfd31b2d" />
+<img width="1824" height="1079" alt="image" src="https://github.com/user-attachments/assets/28b41f2b-1c5f-4b0e-81cc-e47e0bf8f2c4" />
+
+
 ### Tech Used
 Python, spaCy, GitHub Actions, Telegram Bot API  
 
