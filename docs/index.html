@@ -1074,7 +1074,10 @@
   </footer>
 
   <script>
-    // Sample data
+    // Fetch live data from GitHub
+    const GITHUB_ALERTS_URL = 'https://raw.githubusercontent.com/sumukh964/AI_stock_notifier/main/docs/alerts.json';
+
+    // Fallback sample data if GitHub fetch fails
     const SAMPLE_SIGNALS = [
       {
         type: 'buy',
@@ -1324,9 +1327,26 @@
       renderSignals();
     }
 
+    // Load data from GitHub or use sample data
+    async function loadSignals() {
+      try {
+        const response = await fetch(GITHUB_ALERTS_URL);
+        if (response.ok) {
+          allSignals = await response.json();
+          console.log('✅ Loaded', allSignals.length, 'signals from GitHub');
+        } else {
+          throw new Error('Failed to fetch alerts.json');
+        }
+      } catch (error) {
+        console.warn('⚠️ Could not load from GitHub, using sample data:', error.message);
+        // allSignals already set to SAMPLE_SIGNALS
+      }
+      calculateStats();
+      renderSignals();
+    }
+
     // Initialize
-    calculateStats();
-    renderSignals();
+    loadSignals();
   </script>
 </body>
 </html>
