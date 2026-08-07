@@ -1,534 +1,1332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AI Stock Intelligence — Signal Log</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-/* ── RESET & BASE ───────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', sans-serif;
-  background: #0a0a0f;
-  color: #e2e8f0;
-  min-height: 100vh;
-  line-height: 1.6;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Stock Intelligence — Vibecoder Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── RESET & BASE ───────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* ── BACKGROUND GLOW ────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  top: -30vh; left: 50%;
-  transform: translateX(-50%);
-  width: 80vw; height: 60vh;
-  background: radial-gradient(ellipse, rgba(99,102,241,0.08) 0%, transparent 65%);
-  pointer-events: none; z-index: 0;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* ── LAYOUT ─────────────────────────────────── */
-.page { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 0 20px 80px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f8fafb 0%, #ffffff 50%, #f0f9fc 100%);
+      color: #1f2937;
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-/* ── HEADER ─────────────────────────────────── */
-.header {
-  padding: 56px 0 44px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  margin-bottom: 40px;
-  text-align: center;
-}
-.header-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: 11px; font-weight: 500; letter-spacing: .1em;
-  text-transform: uppercase; color: #a5b4fc;
-  background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25);
-  padding: 5px 14px; border-radius: 20px; margin-bottom: 22px;
-}
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #4ade80; animation: blink 2s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.header h1 {
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 700; color: #f1f5f9;
-  line-height: 1.1; margin-bottom: 16px; letter-spacing: -.02em;
-}
-.header h1 span { color: #818cf8; }
-.header p {
-  font-size: 14px; color: #94a3b8; max-width: 540px;
-  margin: 0 auto 24px; line-height: 1.8;
-}
-.header-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.tag {
-  font-size: 11px; font-weight: 500;
-  padding: 4px 12px; border-radius: 6px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #94a3b8; text-decoration: none;
-  transition: all .2s;
-}
-.tag:hover { border-color: rgba(99,102,241,0.5); color: #c7d2fe; }
-.tag.main { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3); color: #a5b4fc; }
+    /* ── LAYOUT ─────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
 
-/* ── STATS GRID ─────────────────────────────── */
-.stats {
-  display: grid; grid-template-columns: repeat(5,1fr);
-  gap: 1px; background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px; overflow: hidden; margin-bottom: 32px;
-}
-.stat { background: #0f0f1a; padding: 20px 12px; text-align: center; }
-.stat-val {
-  font-size: 24px; font-weight: 700;
-  color: #f1f5f9; line-height: 1; margin-bottom: 5px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.stat-val.green { color: #4ade80; }
-.stat-val.red   { color: #f87171; }
-.stat-val.purple{ color: #a5b4fc; }
-.stat-lbl { font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #475569; }
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 1rem;
+      }
+    }
 
-/* ── FILTER BAR ─────────────────────────────── */
-.filter-bar {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 28px; flex-wrap: wrap;
-}
-.filter-lbl { font-size: 11px; font-weight: 500; color: #475569; text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
-.f-btn {
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-  padding: 6px 16px; border-radius: 8px; cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03); color: #64748b;
-  transition: all .2s; letter-spacing: .02em;
-}
-.f-btn:hover { color: #e2e8f0; border-color: rgba(255,255,255,0.15); }
-.f-btn.a-all    { background: rgba(99,102,241,0.12); border-color: rgba(99,102,241,0.35); color: #a5b4fc; }
-.f-btn.a-rise   { background: rgba(74,222,128,0.10); border-color: rgba(74,222,128,0.30); color: #4ade80; }
-.f-btn.a-fall   { background: rgba(248,113,113,0.10); border-color: rgba(248,113,113,0.30); color: #f87171; }
-.f-btn.a-nosig  { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); color: #94a3b8; }
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      animation: slideDown 0.6s ease-out;
+    }
 
-/* ── SECTION LABEL ──────────────────────────── */
-.sec-lbl {
-  font-size: 10px; font-weight: 600; letter-spacing: .12em;
-  text-transform: uppercase; color: #334155;
-  margin-bottom: 14px; display: flex; align-items: center; gap: 12px;
-}
-.sec-lbl::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.05); }
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-/* ── DATE GROUP ─────────────────────────────── */
-.date-group { margin-bottom: 36px; }
-.date-lbl {
-  font-size: 10px; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: #334155; margin-bottom: 12px;
-}
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+    }
 
-/* ── CARD ───────────────────────────────────── */
-.card {
-  background: #0f0f1a;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px; margin-bottom: 12px;
-  overflow: hidden; animation: up .4s ease both;
-  transition: transform .2s, border-color .2s;
-}
-.card:hover { transform: translateY(-2px); }
-.card.rise { border-left: 3px solid #4ade80; }
-.card.rise:hover { border-color: rgba(74,222,128,0.3); }
-.card.fall { border-left: 3px solid #f87171; }
-.card.fall:hover { border-color: rgba(248,113,113,0.3); }
-.card.nosig { border-left: 3px solid #334155; }
-@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
 
-/* ── CARD HEADER ────────────────────────────── */
-.card-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 10px;
-}
-.card-label { display: flex; align-items: center; gap: 10px; }
-.card-icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; font-size: 15px;
-}
-.card-icon.rise { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); }
-.card-icon.fall { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); }
-.card-icon.nosig{ background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); }
-.card-type { font-size: 12px; font-weight: 600; letter-spacing: .05em; }
-.card-type.rise { color: #4ade80; }
-.card-type.fall { color: #f87171; }
-.card-type.nosig{ color: #475569; }
-.card-time { font-size: 11px; color: #334155; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+    .logo:hover {
+      transform: scale(1.05);
+    }
 
-/* ── CARD BODY ──────────────────────────────── */
-.card-body { padding: 18px 18px; }
-.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.field {
-  padding: 10px 16px 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-.field:nth-child(even) { padding-left: 16px; border-left: 1px solid rgba(255,255,255,0.04); }
-.field.full { grid-column: 1/-1; padding-left: 0; border-left: none; }
-.field.full:last-child { border-bottom: none; }
-.field-key {
-  font-size: 9px; font-weight: 600; letter-spacing: .1em;
-  text-transform: uppercase; color: #334155; margin-bottom: 4px;
-}
-.field-val { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
-.field-val.green  { color: #4ade80; font-weight: 600; font-size: 15px; }
-.field-val.red    { color: #f87171; font-weight: 600; font-size: 15px; }
-.field-val.italic { color: #64748b; font-style: italic; font-size: 12px; }
-.field-val.mood-bull { color: #4ade80; }
-.field-val.mood-bear { color: #f87171; }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.25rem;
+      animation: float 3s ease-in-out infinite;
+    }
 
-/* confidence bar */
-.conf-bar { margin-top: 6px; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
-.conf-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
-.conf-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
-.conf-fill.red   { background: linear-gradient(90deg, #dc2626, #f87171); }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
 
-/* source */
-.field-src { font-size: 10px; color: #334155; margin-top: 4px; font-style: italic; }
+    .logo-text h1 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
 
-/* nosignal */
-.nosig-text { font-size: 13px; color: #475569; line-height: 1.8; }
-.mood-badge {
-  display: inline-block; font-size: 10px; font-weight: 500;
-  padding: 2px 10px; border-radius: 4px; margin-left: 8px; vertical-align: middle;
-}
+    .logo-text p {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin: 0;
+    }
 
-/* ── EMPTY / LOADING ────────────────────────── */
-#loading {
-  text-align: center; padding: 70px 0;
-  font-size: 12px; color: #334155; letter-spacing: .08em; font-weight: 500;
-}
-.spin {
-  width: 22px; height: 22px;
-  border: 2px solid rgba(255,255,255,0.06); border-top-color: #818cf8;
-  border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px;
-}
-@keyframes spin { to{ transform: rotate(360deg); } }
-#empty { text-align: center; padding: 70px 0; color: #334155; }
-#empty p { font-size: 13px; color: #475569; margin-top: 10px; }
+    .github-link {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      transition: all 0.3s ease;
+    }
 
-/* ── FOOTER ─────────────────────────────────── */
-footer {
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding-top: 28px; margin-top: 48px;
-  display: flex; justify-content: space-between;
-  align-items: center; flex-wrap: wrap; gap: 12px;
-}
-.footer-left { font-size: 12px; color: #334155; line-height: 1.8; }
-.footer-links { display: flex; gap: 20px; }
-.footer-links a {
-  font-size: 11px; font-weight: 500; letter-spacing: .06em;
-  text-transform: uppercase; color: #334155;
-  text-decoration: none; transition: color .2s;
-}
-.footer-links a:hover { color: #818cf8; }
+    .github-link:hover {
+      background: #f3f4f6;
+      color: #06b6d4;
+      transform: rotate(20deg);
+    }
 
-/* ── RESPONSIVE ─────────────────────────────── */
-@media (max-width: 600px) {
-  .stats { grid-template-columns: repeat(3,1fr); }
-  .fields { grid-template-columns: 1fr; }
-  .field:nth-child(even) { padding-left: 0; border-left: none; }
-  .field.full { grid-column: auto; }
-}
-</style>
+    /* ── HERO SECTION ───────────────────────────── */
+    .hero {
+      padding: 4rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+      animation: gradientShift 8s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      text-align: center;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      margin-bottom: 1.5rem;
+      animation: slideInDown 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      50% { opacity: 0.3; }
+      100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+
+    .live-badge span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #0891b2;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      animation: slideInUp 1s ease-out 0.3s both;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% {
+        background-position: 0% center;
+      }
+      50% {
+        background-position: 100% center;
+      }
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #4b5563;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: slideInUp 1s ease-out 0.4s both;
+    }
+
+    .hero p strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+      animation: slideInUp 1s ease-out 0.5s both;
+    }
+
+    .tag {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(209, 213, 219, 0.5);
+      font-size: 0.875rem;
+      color: #4b5563;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      border-color: rgba(6, 182, 212, 0.5);
+      color: #0891b2;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(6, 182, 212, 0.1);
+    }
+
+    /* ── FLOATING ELEMENTS ──────────────────────── */
+    .floating-element {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.1;
+      font-size: 4rem;
+    }
+
+    .floating-element.float-1 {
+      top: 10%;
+      left: 5%;
+      animation: float-animation 6s ease-in-out infinite;
+    }
+
+    .floating-element.float-2 {
+      top: 20%;
+      right: 8%;
+      animation: float-animation 8s ease-in-out infinite 1s;
+    }
+
+    .floating-element.float-3 {
+      bottom: 15%;
+      left: 10%;
+      animation: float-animation 7s ease-in-out infinite 2s;
+    }
+
+    @keyframes float-animation {
+      0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-30px) translateX(20px) rotate(90deg);
+      }
+      50% {
+        transform: translateY(-60px) translateX(-20px) rotate(180deg);
+      }
+      75% {
+        transform: translateY(-30px) translateX(-40px) rotate(270deg);
+      }
+    }
+
+    /* ── STATS GRID ─────────────────────────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin: 4rem 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-card {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .stat-card:hover::before {
+      left: 100%;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover .stat-value {
+      transform: scale(1.1);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    /* ── FILTER BAR ─────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 3rem 0 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(209, 213, 219, 0.5);
+      background: rgba(255, 255, 255, 0.6);
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      font-family: 'Inter', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .filter-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .filter-btn:hover {
+      border-color: rgba(6, 182, 212, 0.5);
+      color: #0891b2;
+      transform: translateY(-2px);
+    }
+
+    .filter-btn.active {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .filter-btn.active.rise {
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      border-color: #10b981;
+    }
+
+    .filter-btn.active.fall {
+      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+      border-color: #ef4444;
+    }
+
+    .filter-btn.active.buy {
+      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+      border-color: #06b6d4;
+    }
+
+    /* ── SECTION LABEL ──────────────────────────── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin: 3rem 0 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(209, 213, 219, 0.3);
+    }
+
+    .section-icon {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── SIGNAL CARDS ───────────────────────────── */
+    .signals-feed {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .signal-card {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      animation: slideInCard 0.6s ease-out both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes slideInCard {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .signal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .signal-card:hover::before {
+      opacity: 1;
+    }
+
+    .signal-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+
+    .signal-card.rise {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .signal-card.fall {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .signal-card.neutral {
+      background: rgba(107, 114, 128, 0.08);
+      border-color: rgba(107, 114, 128, 0.2);
+    }
+
+    .signal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .signal-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .signal-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .signal-card.rise .signal-icon {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .signal-card.fall .signal-icon {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .signal-card.neutral .signal-icon {
+      background: rgba(107, 114, 128, 0.2);
+      color: #6b7280;
+    }
+
+    .signal-card:hover .signal-icon {
+      transform: scale(1.15) rotate(10deg);
+    }
+
+    .signal-meta {
+      flex: 1;
+    }
+
+    .signal-company {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 0.25rem;
+    }
+
+    .signal-date {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .signal-badge {
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .signal-card.rise .signal-badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .signal-card.fall .signal-badge {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .signal-card.neutral .signal-badge {
+      background: rgba(107, 114, 128, 0.2);
+      color: #6b7280;
+    }
+
+    .signal-card:hover .signal-badge {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .signal-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .signal-field {
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+    }
+
+    .field-value {
+      font-size: 0.95rem;
+      color: #374151;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .field-value.highlight {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .signal-card.rise .field-value.highlight {
+      color: #10b981;
+    }
+
+    .signal-card.fall .field-value.highlight {
+      color: #ef4444;
+    }
+
+    .signal-card:hover .field-value.highlight {
+      transform: scale(1.05);
+    }
+
+    .confidence-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(209, 213, 219, 0.3);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+      position: relative;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    .signal-card.fall .confidence-fill {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    .signal-section {
+      grid-column: 1 / -1;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(209, 213, 219, 0.2);
+    }
+
+    .signal-section .field-label {
+      margin-bottom: 0.5rem;
+    }
+
+    .signal-section .field-value {
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    /* ── EMPTY STATE ────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      animation: fadeInUp 0.6s ease-out;
+      position: relative;
+      z-index: 2;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      opacity: 0.2;
+      margin-bottom: 1rem;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .empty-text {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(209, 213, 219, 0.3);
+      padding: 3rem 0;
+      margin-top: 4rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    @media (max-width: 640px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
+    .footer-text {
+      font-size: 0.875rem;
+      color: #6b7280;
+      line-height: 1.8;
+    }
+
+    .footer-text strong {
+      color: #111827;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #06b6d4;
+      transition: width 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: #06b6d4;
+      transform: translateY(-2px);
+    }
+
+    .footer-link:hover::after {
+      width: 100%;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 768px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .signal-body {
+        grid-template-columns: 1fr;
+      }
+
+      .floating-element {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        min-height: auto;
+        padding: 2rem 0 3rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        gap: 0.5rem;
+      }
+
+      .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+      }
+
+      .signal-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-links {
+        gap: 1rem;
+      }
+
+      .floating-element {
+        display: none;
+      }
+    }
+
+    /* ── SCROLL PARALLAX ────────────────────────── */
+    .parallax {
+      will-change: transform;
+    }
+  </style>
 </head>
 <body>
-<div class="page">
+  <!-- Floating Elements -->
+  <div class="floating-element float-1">📈</div>
+  <div class="floating-element float-2">💹</div>
+  <div class="floating-element float-3">🎯</div>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-badge"><span class="live-dot"></span>Live Signal Log · NSE India</div>
-    <h1>AI Stock <span>Rise & Fall</span><br>Predictions</h1>
-    <p>
-      Every morning at <strong style="color:#e2e8f0">7:30 AM IST</strong>,
-      this system fetches Indian financial news, runs
-      <strong style="color:#e2e8f0">FinBERT</strong> sentiment analysis,
-      detects any company in the news, and predicts
-      <strong style="color:#4ade80">RISE ▲</strong> or <strong style="color:#f87171">FALL ▼</strong>.
-      Every Telegram alert is logged here — publicly.
-    </p>
-    <div class="header-tags">
-      <span class="tag main">● FinBERT · ProsusAI</span>
-      <span class="tag">NewsAPI</span>
-      <span class="tag">spaCy NER</span>
-      <span class="tag">GitHub Actions</span>
-      <span class="tag">Telegram Bot</span>
-      <a class="tag" href="https://github.com/sumukh964/AI_stock_notifier" target="_blank">↗ GitHub Repo</a>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">📊</div>
+          <div class="logo-text">
+            <h1>Vibecoder</h1>
+            <p>Stock Intelligence</p>
+          </div>
+        </div>
+        <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank" rel="noopener noreferrer" class="github-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat"><div class="stat-val purple" id="s-total">—</div><div class="stat-lbl">Total Runs</div></div>
-    <div class="stat"><div class="stat-val green"  id="s-rise">—</div><div class="stat-lbl">RISE Signals</div></div>
-    <div class="stat"><div class="stat-val red"    id="s-fall">—</div><div class="stat-lbl">FALL Signals</div></div>
-    <div class="stat"><div class="stat-val"        id="s-nosig">—</div><div class="stat-lbl">No Signal Days</div></div>
-    <div class="stat"><div class="stat-val purple" id="s-conf">—</div><div class="stat-lbl">Avg Confidence</div></div>
-  </div>
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero parallax">
+      <div class="hero-content">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          <span>Live Signal Log · NSE India</span>
+        </div>
 
-  <!-- FILTERS -->
-  <div class="filter-bar">
-    <span class="filter-lbl">Show</span>
-    <button class="f-btn a-all"  onclick="applyFilter('all',this)">All</button>
-    <button class="f-btn"        onclick="applyFilter('rise',this)">RISE ▲</button>
-    <button class="f-btn"        onclick="applyFilter('fall',this)">FALL ▼</button>
-    <button class="f-btn"        onclick="applyFilter('buy',this)">BUY</button>
-    <button class="f-btn"        onclick="applyFilter('no_signal',this)">No Signal</button>
-  </div>
+        <h1>AI Stock <span class="gradient-text">Rise & Fall</span> Predictions</h1>
 
-  <!-- FEED -->
-  <div class="sec-lbl">Signal history</div>
-  <div id="loading"><div class="spin"></div>LOADING SIGNALS…</div>
-  <div id="feed"></div>
-  <div id="empty" style="display:none"><div style="font-size:36px;opacity:.2">◎</div><p>No signals match this filter.</p></div>
+        <p>
+          Every morning at <strong>7:30 AM IST</strong>, this system fetches Indian financial news, runs <strong>FinBERT</strong> sentiment analysis, detects companies in the news, and predicts <strong style="color: #10b981;">RISE ▲</strong> or <strong style="color: #ef4444;">FALL ▼</strong>. Every Telegram alert is logged here — publicly.
+        </p>
 
-  <!-- FOOTER -->
+        <div class="tags">
+          <span class="tag">● FinBERT · ProsusAI</span>
+          <span class="tag">NewsAPI</span>
+          <span class="tag">spaCy NER</span>
+          <span class="tag">GitHub Actions</span>
+          <span class="tag">Telegram Bot</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Grid -->
+    <div class="stats" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalRuns">—</div>
+        <div class="stat-label">Total Runs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="riseSignals">—</div>
+        <div class="stat-label">RISE Signals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="fallSignals">—</div>
+        <div class="stat-label">FALL Signals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="noSignalDays">—</div>
+        <div class="stat-label">No Signal Days</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgConfidence">—</div>
+        <div class="stat-label">Avg Confidence</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="filterSignals('all', this)">All</button>
+      <button class="filter-btn rise" onclick="filterSignals('rise', this)">▲ RISE</button>
+      <button class="filter-btn fall" onclick="filterSignals('fall', this)">▼ FALL</button>
+      <button class="filter-btn buy" onclick="filterSignals('buy', this)">BUY</button>
+      <button class="filter-btn" onclick="filterSignals('no_signal', this)">No Signal</button>
+    </div>
+
+    <!-- Signals Feed -->
+    <div class="section-label">
+      <svg class="section-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="1"></circle>
+        <path d="M12 1v6m0 6v6"></path>
+      </svg>
+      Signal History <span id="signalCount"></span>
+    </div>
+
+    <div class="signals-feed" id="signalsFeed"></div>
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">◎</div>
+      <p class="empty-text">No signals match this filter.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
   <footer>
-    <div class="footer-left">
-      Built by <strong style="color:#cbd5e1">Sumukh R</strong> · Final Year Project 2026<br>
-      <span style="font-size:11px">Not financial advice. For educational & portfolio purposes only.</span>
-    </div>
-    <div class="footer-links">
-      <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank">GitHub</a>
-      <a href="https://github.com/sumukh964/AI_stock_notifier/actions" target="_blank">Actions</a>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-text">
+          Built by <strong>Sumukh R</strong> · Final Year Project 2026<br>
+          <span style="font-size: 0.8rem;">Not financial advice. For educational & portfolio purposes only.</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank" rel="noopener noreferrer" class="footer-link">
+            GitHub ↗
+          </a>
+          <a href="https://github.com/sumukh964/AI_stock_notifier/actions" target="_blank" rel="noopener noreferrer" class="footer-link">
+            Actions ↗
+          </a>
+        </div>
+      </div>
     </div>
   </footer>
-</div>
 
-<script>
-/* ── STATE ──────────────────────────────────────────────────────── */
-let ALL = [], FILTER = 'all';
+  <script>
+    // Sample data
+    const SAMPLE_SIGNALS = [
+      {
+        type: 'buy',
+        date: '2026-04-30',
+        time: '07:31',
+        company: 'ITC',
+        confidence: '95',
+        news_count: '1',
+        positive_count: '1',
+        top_reason: 'ITC, Godfrey Phillips shares rise up to 6.5% on report of 17% hike in cigarette prices in May',
+        market_mood: 'Neutral',
+      },
+      {
+        type: 'rise',
+        date: '2026-04-29',
+        time: '07:31',
+        company: 'Reliance Industries',
+        confidence: '89',
+        article_count: '4',
+        pos_ratio: '80',
+        reasoning: '4/4 articles positive · avg sentiment score +0.62',
+        top_headline: 'Reliance posts record Q4 profit on Jio growth and retail expansion',
+        top_source: 'Economic Times',
+        market_mood: 'Bullish',
+      },
+      {
+        type: 'rise',
+        date: '2026-04-29',
+        time: '07:32',
+        company: 'HDFC Bank',
+        confidence: '83',
+        article_count: '3',
+        pos_ratio: '100',
+        reasoning: '3/3 articles positive · avg sentiment score +0.58',
+        top_headline: 'HDFC Bank sees surge in retail loan disbursals in March quarter',
+        top_source: 'Moneycontrol',
+        market_mood: 'Bullish',
+      },
+      {
+        type: 'fall',
+        date: '2026-04-29',
+        time: '07:33',
+        company: 'Wipro',
+        confidence: '76',
+        article_count: '2',
+        neg_ratio: '100',
+        reasoning: '2/2 articles negative · avg sentiment score -0.54',
+        top_headline: 'Wipro flags weak demand outlook; guidance disappoints Street',
+        top_source: 'LiveMint',
+        market_mood: 'Bullish',
+      },
+      {
+        type: 'no_signal',
+        date: '2026-04-28',
+        time: '07:31',
+        market_mood: 'Bearish',
+        articles_analysed: 38,
+        companies_found: 9,
+      },
+      {
+        type: 'rise',
+        date: '2026-04-27',
+        time: '07:30',
+        company: 'TCS',
+        confidence: '86',
+        article_count: '3',
+        pos_ratio: '100',
+        reasoning: '3/3 articles positive · avg sentiment score +0.71',
+        top_headline: 'TCS wins $600M deal from Fortune 500 client in North America',
+        top_source: 'Reuters',
+        market_mood: 'Bullish',
+      },
+      {
+        type: 'fall',
+        date: '2026-04-27',
+        time: '07:31',
+        company: 'Sun Pharma',
+        confidence: '79',
+        article_count: '2',
+        neg_ratio: '100',
+        reasoning: '2/2 articles negative · avg sentiment score -0.61',
+        top_headline: 'Sun Pharma receives US FDA warning letter for Halol plant',
+        top_source: 'Business Standard',
+        market_mood: 'Bullish',
+      },
+    ];
 
-/* ── LOAD ───────────────────────────────────────────────────────── */
-async function load() {
-  try {
-    const r = await fetch('alerts.json?v=' + Date.now());
-    if (!r.ok) throw new Error();
-    ALL = await r.json();
-  } catch {
-    ALL = SAMPLE;
-  }
-  document.getElementById('loading').style.display = 'none';
-  calcStats();
-  renderFeed();
-}
+    let allSignals = SAMPLE_SIGNALS;
+    let currentFilter = 'all';
 
-/* ── STATS ──────────────────────────────────────────────────────── */
-function calcStats() {
-  const rise  = ALL.filter(a => a.type === 'rise' || a.type === 'buy');
-  const fall  = ALL.filter(a => a.type === 'fall');
-  const confs = [...rise, ...fall].map(a => parseFloat(a.confidence)).filter(Boolean);
-  const avg   = confs.length ? Math.round(confs.reduce((s,v)=>s+v,0)/confs.length) : 0;
-  set('s-total', ALL.length);
-  set('s-rise',  rise.length);
-  set('s-fall',  fall.length);
-  set('s-nosig', ALL.filter(a => a.type === 'no_signal').length);
-  set('s-conf',  avg ? avg + '%' : '—');
-}
-function set(id, v) { document.getElementById(id).textContent = v; }
+    // Parallax scroll effect
+    window.addEventListener('scroll', () => {
+      const parallaxElements = document.querySelectorAll('.parallax');
+      parallaxElements.forEach(el => {
+        const scrollPosition = window.scrollY;
+        el.style.transform = `translateY(${scrollPosition * 0.5}px)`;
+      });
+    });
 
-/* ── FILTER ─────────────────────────────────────────────────────── */
-function applyFilter(f, el) {
-  FILTER = f;
-  document.querySelectorAll('.f-btn').forEach(b => b.className = 'f-btn');
-  const cls = f==='rise'?'a-rise':f==='fall'?'a-fall':f==='no_signal'?'a-nosig':'a-all';
-  el.className = 'f-btn ' + cls;
-  renderFeed();
-}
+    function calculateStats() {
+      const rise = allSignals.filter(s => s.type === 'rise' || s.type === 'buy').length;
+      const fall = allSignals.filter(s => s.type === 'fall').length;
+      const noSignal = allSignals.filter(s => s.type === 'no_signal').length;
+      const avgConf = Math.round(
+        allSignals
+          .filter(s => s.confidence)
+          .reduce((sum, s) => sum + parseInt(s.confidence), 0) /
+          allSignals.filter(s => s.confidence).length
+      );
 
-/* ── RENDER ─────────────────────────────────────────────────────── */
-function renderFeed() {
-  // treat 'buy' and 'rise' the same for filtering
-  const list = ALL.filter(a => {
-    if (FILTER === 'all') return true;
-    if (FILTER === 'rise') return a.type === 'rise' || a.type === 'buy';
-    return a.type === FILTER;
-  });
+      animateValue('totalRuns', 0, allSignals.length, 1000);
+      animateValue('riseSignals', 0, rise, 1000);
+      animateValue('fallSignals', 0, fall, 1000);
+      animateValue('noSignalDays', 0, noSignal, 1000);
+      animateValue('avgConfidence', 0, avgConf, 1000, '%');
+    }
 
-  const feed  = document.getElementById('feed');
-  const empty = document.getElementById('empty');
-  if (!list.length) { feed.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
+    function animateValue(id, start, end, duration, suffix = '') {
+      const element = document.getElementById(id);
+      const range = end - start;
+      const increment = range / (duration / 16);
+      let current = start;
 
-  // Group by date, newest first
-  const groups = {};
-  list.forEach(a => {
-    const d = a.date || 'Unknown';
-    if (!groups[d]) groups[d] = [];
-    groups[d].push(a);
-  });
-  const dates = Object.keys(groups).sort((a,b) => new Date(b)-new Date(a));
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= end) {
+          current = end;
+          clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + suffix;
+      }, 16);
+    }
 
-  let idx = 0;
-  feed.innerHTML = dates.map(date => `
-    <div class="date-group">
-      <div class="date-lbl">${fmtDate(date)}</div>
-      ${groups[date].map(a => buildCard(a, idx++)).join('')}
-    </div>`).join('');
-}
+    function renderSignals() {
+      const filtered = allSignals.filter(s => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'rise') return s.type === 'rise' || s.type === 'buy';
+        if (currentFilter === 'fall') return s.type === 'fall';
+        if (currentFilter === 'buy') return s.type === 'buy';
+        if (currentFilter === 'no_signal') return s.type === 'no_signal';
+        return true;
+      });
 
-/* ── CARD BUILDER ───────────────────────────────────────────────── */
-function buildCard(a, i) {
-  const delay = Math.min(i * 55, 450) + 'ms';
+      const feed = document.getElementById('signalsFeed');
+      const empty = document.getElementById('emptyState');
+      const count = document.getElementById('signalCount');
 
-  /* ── RISE / BUY ── */
-  if (a.type === 'rise' || a.type === 'buy') {
-    const c = parseFloat(a.confidence) || 0;
-    // support both field names: top_reason (buy) and top_headline (rise)
-    const headline = a.top_reason || a.top_headline || '—';
-    const count    = a.news_count || a.article_count || '—';
-    const posCount = a.positive_count || a.pos_ratio || '—';
-    const countLbl = a.news_count
-      ? `${count} headline(s) (${posCount} positive)`
-      : `${count} articles (${posCount}% positive)`;
-    const moodCls  = a.market_mood==='Bullish'?'mood-bull':a.market_mood==='Bearish'?'mood-bear':'';
+      count.textContent = `(${filtered.length})`;
 
-    return `
-    <div class="card rise" style="animation-delay:${delay}">
-      <div class="card-hdr">
-        <div class="card-label">
-          <div class="card-icon rise">📈</div>
-          <span class="card-type rise">${a.type==='buy'?'AI STOCK BUY SIGNAL':'STOCK RISE PREDICTION ▲'}</span>
+      if (filtered.length === 0) {
+        feed.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      feed.innerHTML = filtered.map((signal, idx) => createSignalCard(signal, idx)).join('');
+    }
+
+    function createSignalCard(signal, idx) {
+      const isRise = signal.type === 'rise' || signal.type === 'buy';
+      const isFall = signal.type === 'fall';
+      const isNoSignal = signal.type === 'no_signal';
+
+      const cardClass = isRise ? 'rise' : isFall ? 'fall' : 'neutral';
+      const icon = isRise ? '▲' : isFall ? '▼' : '◎';
+      const badge = signal.type === 'buy' ? 'BUY' : signal.type === 'rise' ? '▲ RISE' : signal.type === 'fall' ? '▼ FALL' : 'NO SIGNAL';
+
+      let bodyHtml = '';
+
+      if (isNoSignal) {
+        bodyHtml = `
+          <div class="signal-field">
+            <div class="field-label">Articles Analysed</div>
+            <div class="field-value highlight">${signal.articles_analysed}</div>
+          </div>
+          <div class="signal-field">
+            <div class="field-label">Companies Found</div>
+            <div class="field-value highlight">${signal.companies_found}</div>
+          </div>
+          <div class="signal-field" style="grid-column: 1 / -1;">
+            <div class="field-label">Market Mood</div>
+            <div class="field-value">${signal.market_mood}</div>
+          </div>
+        `;
+      } else {
+        bodyHtml = `
+          <div class="signal-field">
+            <div class="field-label">Confidence</div>
+            <div class="field-value highlight">${signal.confidence}%</div>
+            <div class="confidence-bar">
+              <div class="confidence-fill" style="width: ${signal.confidence}%"></div>
+            </div>
+          </div>
+          <div class="signal-field">
+            <div class="field-label">Articles</div>
+            <div class="field-value highlight">${signal.article_count || signal.news_count}</div>
+            <div class="field-value" style="font-size: 0.8rem; margin-top: 0.25rem;">
+              ${signal.pos_ratio ? signal.pos_ratio + '% positive' : signal.positive_count ? signal.positive_count + ' positive' : 'analyzed'}
+            </div>
+          </div>
+          ${signal.reasoning ? `
+            <div class="signal-section">
+              <div class="field-label">Analysis</div>
+              <div class="field-value">${signal.reasoning}</div>
+            </div>
+          ` : ''}
+          ${signal.top_headline ? `
+            <div class="signal-section">
+              <div class="field-label">Top Headline</div>
+              <div class="field-value">${signal.top_headline}</div>
+              ${signal.top_source ? `<div class="field-value" style="font-size: 0.8rem; margin-top: 0.25rem; color: #9ca3af;">Source: ${signal.top_source}</div>` : ''}
+            </div>
+          ` : ''}
+          ${signal.market_mood ? `
+            <div class="signal-section">
+              <div class="field-label">Market Mood</div>
+              <div class="field-value">${signal.market_mood}</div>
+            </div>
+          ` : ''}
+        `;
+      }
+
+      return `
+        <div class="signal-card ${cardClass}" style="animation-delay: ${idx * 80}ms;">
+          <div class="signal-header">
+            <div class="signal-info">
+              <div class="signal-icon">${icon}</div>
+              <div class="signal-meta">
+                <div class="signal-company">${signal.company || 'Market Analysis'}</div>
+                <div class="signal-date">${signal.date}</div>
+              </div>
+            </div>
+            <div class="signal-badge">${badge}</div>
+          </div>
+          <div class="signal-body">
+            ${bodyHtml}
+          </div>
         </div>
-        <span class="card-time">${a.time || ''} IST</span>
-      </div>
-      <div class="card-body">
-        <div class="fields">
-          <div class="field">
-            <div class="field-key">🏢 Company</div>
-            <div class="field-val green">${a.company || '—'}</div>
-          </div>
-          <div class="field">
-            <div class="field-key">📊 Confidence</div>
-            <div class="field-val green">${c}%</div>
-            <div class="conf-bar"><div class="conf-fill green" style="width:${c}%"></div></div>
-          </div>
-          <div class="field">
-            <div class="field-key">📰 News Count</div>
-            <div class="field-val">${countLbl}</div>
-          </div>
-          <div class="field">
-            <div class="field-key">🌐 Market Mood</div>
-            <div class="field-val ${moodCls}">${a.market_mood || '—'}</div>
-          </div>
-          ${a.reasoning ? `
-          <div class="field full">
-            <div class="field-key">🧠 Reasoning</div>
-            <div class="field-val" style="color:#64748b">${a.reasoning}</div>
-          </div>` : ''}
-          <div class="field full">
-            <div class="field-key">💡 Top Headline</div>
-            <div class="field-val italic">"${headline}"</div>
-            ${a.top_source ? `<div class="field-src">— ${a.top_source}</div>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }
+      `;
+    }
 
-  /* ── FALL ── */
-  if (a.type === 'fall') {
-    const c       = parseFloat(a.confidence) || 0;
-    const headline= a.top_headline || a.top_reason || '—';
-    const count   = a.article_count || a.news_count || '—';
-    const negPct  = a.neg_ratio || a.negative_count || '—';
-    const moodCls = a.market_mood==='Bullish'?'mood-bull':a.market_mood==='Bearish'?'mood-bear':'';
+    function filterSignals(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSignals();
+    }
 
-    return `
-    <div class="card fall" style="animation-delay:${delay}">
-      <div class="card-hdr">
-        <div class="card-label">
-          <div class="card-icon fall">📉</div>
-          <span class="card-type fall">STOCK FALL PREDICTION ▼</span>
-        </div>
-        <span class="card-time">${a.time || ''} IST</span>
-      </div>
-      <div class="card-body">
-        <div class="fields">
-          <div class="field">
-            <div class="field-key">🏢 Company</div>
-            <div class="field-val red">${a.company || '—'}</div>
-          </div>
-          <div class="field">
-            <div class="field-key">📊 Confidence</div>
-            <div class="field-val red">${c}%</div>
-            <div class="conf-bar"><div class="conf-fill red" style="width:${c}%"></div></div>
-          </div>
-          <div class="field">
-            <div class="field-key">📰 Articles</div>
-            <div class="field-val">${count} analysed (${negPct}% negative)</div>
-          </div>
-          <div class="field">
-            <div class="field-key">🌐 Market Mood</div>
-            <div class="field-val ${moodCls}">${a.market_mood || '—'}</div>
-          </div>
-          ${a.reasoning ? `
-          <div class="field full">
-            <div class="field-key">🧠 Reasoning</div>
-            <div class="field-val" style="color:#64748b">${a.reasoning}</div>
-          </div>` : ''}
-          <div class="field full">
-            <div class="field-key">💡 Top Headline</div>
-            <div class="field-val italic">"${headline}"</div>
-            ${a.top_source ? `<div class="field-src">— ${a.top_source}</div>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  /* ── NO SIGNAL ── */
-  if (a.type === 'no_signal') {
-    const mc = a.market_mood==='Bearish'?'#f87171':a.market_mood==='Bullish'?'#4ade80':'#64748b';
-    const extra = a.articles_analysed
-      ? `${a.articles_analysed} articles analysed · ${a.companies_found} companies found.`
-      : '';
-    return `
-    <div class="card nosig" style="animation-delay:${delay}">
-      <div class="card-hdr">
-        <div class="card-label">
-          <div class="card-icon nosig">🔕</div>
-          <span class="card-type nosig">NO STRONG SIGNALS</span>
-        </div>
-        <span class="card-time">${a.time || ''} IST</span>
-      </div>
-      <div class="card-body">
-        <p class="nosig-text">
-          No high-confidence RISE or FALL predictions today. ${extra}
-          Market sentiment cautious.
-          <span class="mood-badge" style="background:${mc}18;color:${mc};border:1px solid ${mc}40">
-            ${a.market_mood || 'Neutral'}
-          </span>
-        </p>
-      </div>
-    </div>`;
-  }
-
-  return '';
-}
-
-/* ── HELPERS ────────────────────────────────────────────────────── */
-function fmtDate(d) {
-  try { return new Date(d).toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
-  catch { return d; }
-}
-
-/* ── SAMPLE DATA (shown until real alerts.json is generated) ─────── */
-const SAMPLE = [
-  {type:'buy',date:'2026-04-30',time:'07:31',company:'ITC',confidence:'95',news_count:'1',positive_count:'1',top_reason:'ITC, Godfrey Phillips shares rise up to 6.5% on report of 17% hike in cigarette prices in May',market_mood:'Neutral'},
-  {type:'rise',date:'2026-04-29',time:'07:31',company:'Reliance Industries',confidence:'89',article_count:'4',pos_ratio:'80',reasoning:'4/4 articles positive · avg sentiment score +0.62',top_headline:'Reliance posts record Q4 profit on Jio growth and retail expansion',top_source:'Economic Times',market_mood:'Bullish'},
-  {type:'rise',date:'2026-04-29',time:'07:32',company:'HDFC Bank',confidence:'83',article_count:'3',pos_ratio:'100',reasoning:'3/3 articles positive · avg sentiment score +0.58',top_headline:'HDFC Bank sees surge in retail loan disbursals in March quarter',top_source:'Moneycontrol',market_mood:'Bullish'},
-  {type:'fall',date:'2026-04-29',time:'07:33',company:'Wipro',confidence:'76',article_count:'2',neg_ratio:'100',reasoning:'2/2 articles negative · avg sentiment score -0.54',top_headline:'Wipro flags weak demand outlook; guidance disappoints Street',top_source:'LiveMint',market_mood:'Bullish'},
-  {type:'no_signal',date:'2026-04-28',time:'07:31',market_mood:'Bearish',articles_analysed:38,companies_found:9},
-  {type:'rise',date:'2026-04-27',time:'07:30',company:'TCS',confidence:'86',article_count:'3',pos_ratio:'100',reasoning:'3/3 articles positive · avg sentiment score +0.71',top_headline:'TCS wins $600M deal from Fortune 500 client in North America',top_source:'Reuters',market_mood:'Bullish'},
-  {type:'fall',date:'2026-04-27',time:'07:31',company:'Sun Pharma',confidence:'79',article_count:'2',neg_ratio:'100',reasoning:'2/2 articles negative · avg sentiment score -0.61',top_headline:'Sun Pharma receives US FDA warning letter for Halol plant',top_source:'Business Standard',market_mood:'Bullish'},
-];
-
-load();
-</script>
+    // Initialize
+    calculateStats();
+    renderSignals();
+  </script>
 </body>
 </html>
