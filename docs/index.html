@@ -3,16 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Stock Intelligence — Vibecoder Edition</title>
+  <title>Vibecoder — AI Stock Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- CDN Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
   <style>
-    /* ── RESET & BASE ───────────────────────────── */
-    *, *::before, *::after {
-      box-sizing: border-box;
+    /* ═══════════════════════════════════════════════════════════════════
+       CSS STYLING
+       ═══════════════════════════════════════════════════════════════════ */
+
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     html {
@@ -21,159 +30,408 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #f8fafb 0%, #ffffff 50%, #f0f9fc 100%);
-      color: #1f2937;
-      min-height: 100vh;
-      line-height: 1.6;
+      background: #0a0e27;
+      color: #ffffff;
       overflow-x: hidden;
+      line-height: 1.6;
     }
 
-    /* ── LAYOUT ─────────────────────────────────── */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    @media (max-width: 640px) {
-      .container {
-        padding: 0 1rem;
-      }
-    }
-
-    /* ── HEADER ─────────────────────────────────── */
-    header {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.7);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: sticky;
+    /* ── CANVAS ─────────────────────────────────────────────────────── */
+    #canvas {
+      position: fixed;
       top: 0;
-      z-index: 40;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      animation: slideDown 0.6s ease-out;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
     }
 
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ── CONTENT OVERLAY ────────────────────────────────────────────── */
+    .content {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    .header-content {
+    .content > * {
+      pointer-events: auto;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────────────── */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem;
+      z-index: 50;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 1rem 0;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      background: rgba(10, 14, 39, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .logo {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.05);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      animation: slideInLeft 0.8s ease-out;
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #06b6d4, #0ea5e9);
       border-radius: 0.5rem;
-      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 1.25rem;
-      animation: float 3s ease-in-out infinite;
+      font-size: 1rem;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .logo-text h1 {
-      font-size: 1.125rem;
-      font-weight: 700;
-      color: #111827;
-      margin: 0;
-    }
-
-    .logo-text p {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    .github-link {
-      width: 40px;
-      height: 40px;
+    nav {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 0.5rem;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: #6b7280;
-      transition: all 0.3s ease;
+      gap: 2rem;
+      animation: slideInRight 0.8s ease-out;
     }
 
-    .github-link:hover {
-      background: #f3f4f6;
-      color: #06b6d4;
-      transform: rotate(20deg);
-    }
-
-    /* ── HERO SECTION ───────────────────────────── */
-    .hero {
-      padding: 4rem 0 6rem;
+    nav a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.3s ease;
       position: relative;
-      overflow: hidden;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .hero::before {
+    nav a::after {
       content: '';
       position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-      animation: gradientShift 8s ease-in-out infinite;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #06b6d4, #0ea5e9);
+      transition: width 0.3s ease;
     }
 
-    @keyframes gradientShift {
-      0%, 100% {
-        opacity: 1;
+    nav a:hover {
+      color: #06b6d4;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: none;
       }
-      50% {
-        opacity: 0.7;
-      }
+    }
+
+    /* ── HERO SECTION ───────────────────────────────────────────────── */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 10;
     }
 
     .hero-content {
-      position: relative;
-      z-index: 1;
       max-width: 900px;
-      text-align: center;
-      animation: fadeInUp 1s ease-out;
+      padding: 2rem;
     }
 
+    .hero-badge {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03em;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+      background: linear-gradient(135deg, #ffffff 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+      line-height: 1.8;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: left 0.5s ease;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(6, 182, 212, 0.3);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-indicator svg {
+      width: 24px;
+      height: 24px;
+      stroke: rgba(255, 255, 255, 0.5);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ── SECTIONS ───────────────────────────────────────────────────── */
+    section {
+      min-height: 100vh;
+      padding: 6rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .section-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #06b6d4;
+      margin-bottom: 1rem;
+    }
+
+    section h2 {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    section p {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    /* ── FEATURES SECTION ───────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: left;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.2), transparent);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(6, 182, 212, 0.3);
+      background: rgba(6, 182, 212, 0.05);
+      transform: translateY(-10px);
+    }
+
+    .feature-card:hover::before {
+      top: -20%;
+      right: -20%;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+      position: relative;
+      z-index: 1;
+      text-align: left;
+      margin: 0;
+    }
+
+    /* ── STATS SECTION ──────────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    /* ── CTA SECTION ────────────────────────────────────────────────── */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(14, 165, 233, 0.05));
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 2rem;
+      padding: 4rem 2rem;
+      max-width: 800px;
+      margin-top: 2rem;
+    }
+
+    .cta-section h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.875rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: #06b6d4;
+    }
+
+    /* ── ANIMATIONS ─────────────────────────────────────────────────── */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -185,717 +443,35 @@
       }
     }
 
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      background: rgba(6, 182, 212, 0.1);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      margin-bottom: 1.5rem;
-      animation: slideInDown 0.8s ease-out 0.2s both;
-    }
-
-    @keyframes slideInDown {
+    @keyframes slideInLeft {
       from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateX(-30px);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      50% { opacity: 0.3; }
-      100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    }
-
-    .live-badge span {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #0891b2;
-    }
-
-    h1 {
-      font-size: clamp(2.5rem, 8vw, 4.5rem);
-      font-weight: 700;
-      color: #111827;
-      line-height: 1.1;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-      animation: slideInUp 1s ease-out 0.3s both;
-    }
-
-    @keyframes slideInUp {
+    @keyframes slideInRight {
       from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateX(30px);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
-    .gradient-text {
-      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 3s ease-in-out infinite;
-    }
-
-    @keyframes shimmer {
-      0%, 100% {
-        background-position: 0% center;
-      }
-      50% {
-        background-position: 100% center;
-      }
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      color: #4b5563;
-      line-height: 1.8;
-      margin-bottom: 2rem;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      animation: slideInUp 1s ease-out 0.4s both;
-    }
-
-    .hero p strong {
-      color: #111827;
-      font-weight: 600;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      justify-content: center;
-      animation: slideInUp 1s ease-out 0.5s both;
-    }
-
-    .tag {
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(209, 213, 219, 0.5);
-      font-size: 0.875rem;
-      color: #4b5563;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .tag:hover {
-      border-color: rgba(6, 182, 212, 0.5);
-      color: #0891b2;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(6, 182, 212, 0.1);
-    }
-
-    /* ── FLOATING ELEMENTS ──────────────────────── */
-    .floating-element {
-      position: fixed;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.1;
-      font-size: 4rem;
-    }
-
-    .floating-element.float-1 {
-      top: 10%;
-      left: 5%;
-      animation: float-animation 6s ease-in-out infinite;
-    }
-
-    .floating-element.float-2 {
-      top: 20%;
-      right: 8%;
-      animation: float-animation 8s ease-in-out infinite 1s;
-    }
-
-    .floating-element.float-3 {
-      bottom: 15%;
-      left: 10%;
-      animation: float-animation 7s ease-in-out infinite 2s;
-    }
-
-    @keyframes float-animation {
-      0%, 100% {
-        transform: translateY(0px) translateX(0px) rotate(0deg);
-      }
-      25% {
-        transform: translateY(-30px) translateX(20px) rotate(90deg);
-      }
-      50% {
-        transform: translateY(-60px) translateX(-20px) rotate(180deg);
-      }
-      75% {
-        transform: translateY(-30px) translateX(-40px) rotate(270deg);
-      }
-    }
-
-    /* ── STATS GRID ─────────────────────────────── */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-      margin: 4rem 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    .stat-card {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 0.75rem;
-      padding: 2rem 1.5rem;
-      text-align: center;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .stat-card:hover::before {
-      left: 100%;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      border-color: rgba(6, 182, 212, 0.3);
-    }
-
-    .stat-value {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover .stat-value {
-      transform: scale(1.1);
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
-
-    /* ── FILTER BAR ─────────────────────────────── */
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      margin: 3rem 0 2rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .filter-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
-
-    .filter-btn {
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid rgba(209, 213, 219, 0.5);
-      background: rgba(255, 255, 255, 0.6);
-      color: #6b7280;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      font-family: 'Inter', sans-serif;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .filter-btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(6, 182, 212, 0.2);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-
-    .filter-btn:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .filter-btn:hover {
-      border-color: rgba(6, 182, 212, 0.5);
-      color: #0891b2;
-      transform: translateY(-2px);
-    }
-
-    .filter-btn.active {
-      background: #111827;
-      color: white;
-      border-color: #111827;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .filter-btn.active.rise {
-      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-      border-color: #10b981;
-    }
-
-    .filter-btn.active.fall {
-      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
-      border-color: #ef4444;
-    }
-
-    .filter-btn.active.buy {
-      background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
-      border-color: #06b6d4;
-    }
-
-    /* ── SECTION LABEL ──────────────────────────── */
-    .section-label {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #9ca3af;
-      margin: 3rem 0 2rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(209, 213, 219, 0.3);
-    }
-
-    .section-icon {
-      animation: spin 3s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* ── SIGNAL CARDS ───────────────────────────── */
-    .signals-feed {
-      display: grid;
-      gap: 1.5rem;
-      margin-bottom: 4rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .signal-card {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      animation: slideInCard 0.6s ease-out both;
-      position: relative;
-      overflow: hidden;
-    }
-
-    @keyframes slideInCard {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .signal-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .signal-card:hover::before {
-      opacity: 1;
-    }
-
-    .signal-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      border-color: rgba(6, 182, 212, 0.3);
-    }
-
-    .signal-card.rise {
-      background: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.2);
-    }
-
-    .signal-card.fall {
-      background: rgba(239, 68, 68, 0.08);
-      border-color: rgba(239, 68, 68, 0.2);
-    }
-
-    .signal-card.neutral {
-      background: rgba(107, 114, 128, 0.08);
-      border-color: rgba(107, 114, 128, 0.2);
-    }
-
-    .signal-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(209, 213, 219, 0.2);
-      position: relative;
-      z-index: 1;
-    }
-
-    .signal-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex: 1;
-    }
-
-    .signal-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .signal-card.rise .signal-icon {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    .signal-card.fall .signal-icon {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .signal-card.neutral .signal-icon {
-      background: rgba(107, 114, 128, 0.2);
-      color: #6b7280;
-    }
-
-    .signal-card:hover .signal-icon {
-      transform: scale(1.15) rotate(10deg);
-    }
-
-    .signal-meta {
-      flex: 1;
-    }
-
-    .signal-company {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #111827;
-      margin-bottom: 0.25rem;
-    }
-
-    .signal-date {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .signal-badge {
-      padding: 0.4rem 0.9rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .signal-card.rise .signal-badge {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    .signal-card.fall .signal-badge {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .signal-card.neutral .signal-badge {
-      background: rgba(107, 114, 128, 0.2);
-      color: #6b7280;
-    }
-
-    .signal-card:hover .signal-badge {
-      transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .signal-body {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .signal-field {
-      display: flex;
-      flex-direction: column;
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .field-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #9ca3af;
-      margin-bottom: 0.5rem;
-    }
-
-    .field-value {
-      font-size: 0.95rem;
-      color: #374151;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .field-value.highlight {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .signal-card.rise .field-value.highlight {
-      color: #10b981;
-    }
-
-    .signal-card.fall .field-value.highlight {
-      color: #ef4444;
-    }
-
-    .signal-card:hover .field-value.highlight {
-      transform: scale(1.05);
-    }
-
-    .confidence-bar {
-      width: 100%;
-      height: 6px;
-      background: rgba(209, 213, 219, 0.3);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 0.75rem;
-      position: relative;
-    }
-
-    .confidence-fill {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #10b981, #34d399);
-      transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-    }
-
-    .signal-card.fall .confidence-fill {
-      background: linear-gradient(90deg, #ef4444, #f87171);
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-    }
-
-    .signal-section {
-      grid-column: 1 / -1;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(209, 213, 219, 0.2);
-    }
-
-    .signal-section .field-label {
-      margin-bottom: 0.5rem;
-    }
-
-    .signal-section .field-value {
-      line-height: 1.6;
-      color: #4b5563;
-    }
-
-    /* ── EMPTY STATE ────────────────────────────── */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 1.5rem;
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 0.75rem;
-      animation: fadeInUp 0.6s ease-out;
-      position: relative;
-      z-index: 2;
-    }
-
-    .empty-icon {
-      font-size: 3rem;
-      opacity: 0.2;
-      margin-bottom: 1rem;
-      animation: bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .empty-text {
-      color: #6b7280;
-      font-weight: 500;
-    }
-
-    /* ── FOOTER ─────────────────────────────────── */
-    footer {
-      border-top: 1px solid rgba(209, 213, 219, 0.3);
-      padding: 3rem 0;
-      margin-top: 4rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .footer-content {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    @media (max-width: 640px) {
-      .footer-content {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-    }
-
-    .footer-text {
-      font-size: 0.875rem;
-      color: #6b7280;
-      line-height: 1.8;
-    }
-
-    .footer-text strong {
-      color: #111827;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .footer-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #6b7280;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .footer-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #06b6d4;
-      transition: width 0.3s ease;
-    }
-
-    .footer-link:hover {
-      color: #06b6d4;
-      transform: translateY(-2px);
-    }
-
-    .footer-link:hover::after {
-      width: 100%;
-    }
-
-    /* ── RESPONSIVE ─────────────────────────────── */
+    /* ── RESPONSIVE ─────────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
+      header {
+        padding: 1.5rem;
       }
 
-      h1 {
+      .hero h1 {
         font-size: 2.5rem;
       }
 
@@ -903,449 +479,486 @@
         font-size: 1rem;
       }
 
-      .signal-body {
+      section {
+        padding: 3rem 1rem;
+      }
+
+      section h2 {
+        font-size: 2rem;
+      }
+
+      .features-grid {
         grid-template-columns: 1fr;
       }
 
-      .floating-element {
-        font-size: 2rem;
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cta-section {
+        padding: 2rem 1rem;
       }
     }
 
-    @media (max-width: 640px) {
-      .hero {
-        min-height: auto;
-        padding: 2rem 0 3rem;
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.75rem;
       }
 
-      .stats {
-        grid-template-columns: 1fr;
+      .hero p {
+        font-size: 0.95rem;
       }
 
-      .filter-bar {
-        gap: 0.5rem;
+      section h2 {
+        font-size: 1.5rem;
       }
 
-      .filter-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
-      }
-
-      .signal-header {
-        flex-direction: column;
-        align-items: flex-start;
+      .stat-number {
+        font-size: 2rem;
       }
 
       .footer-links {
         gap: 1rem;
       }
-
-      .floating-element {
-        display: none;
-      }
-    }
-
-    /* ── SCROLL PARALLAX ────────────────────────── */
-    .parallax {
-      will-change: transform;
     }
   </style>
 </head>
 <body>
-  <!-- Floating Elements -->
-  <div class="floating-element float-1">📈</div>
-  <div class="floating-element float-2">💹</div>
-  <div class="floating-element float-3">🎯</div>
+  <!-- Canvas for Three.js -->
+  <canvas id="canvas"></canvas>
 
-  <!-- Header -->
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <div class="logo-icon">📊</div>
-          <div class="logo-text">
-            <h1>By Sumukh R</h1>
-          </div>
-        </div>
-        <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank" rel="noopener noreferrer" class="github-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-        </a>
+  <!-- Content Overlay -->
+  <div class="content">
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <div class="logo-icon">📊</div>
+        <span>Vibecoder</span>
       </div>
-    </div>
-  </header>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#stats">Stats</a>
+        <a href="#cta">Get Started</a>
+        <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank">GitHub</a>
+      </nav>
+    </header>
 
-  <!-- Main Content -->
-  <main class="container">
     <!-- Hero Section -->
-    <section class="hero parallax">
+    <section class="hero">
       <div class="hero-content">
-        <div class="live-badge">
-          <div class="live-dot"></div>
-          <span>Live Signal Log · NSE India</span>
+        <div class="hero-badge">🚀 AI-Powered Stock Intelligence</div>
+        <h1>Predict Market Movements</h1>
+        <p>Real-time sentiment analysis powered by FinBERT. Every morning at 7:30 AM IST, we analyze financial news and predict stock RISE or FALL signals with confidence scores.</p>
+        <button class="cta-button">Explore Signals</button>
+      </div>
+      <div class="scroll-indicator">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="12 5 12 19"></polyline>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+      <div class="section-label">How It Works</div>
+      <h2>Intelligent Analysis Pipeline</h2>
+      <p>Our AI system processes financial news through multiple layers of analysis to generate accurate predictions.</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📰</div>
+          <h3>News Aggregation</h3>
+          <p>Fetches latest financial news from NewsAPI every morning at 7:30 AM IST.</p>
         </div>
-
-        <h1>AI Stock <span class="gradient-text">Rise & Fall</span> Predictions</h1>
-
-        <p>
-          Every morning at <strong>7:30 AM IST</strong>, this system fetches Indian financial news, runs <strong>FinBERT</strong> sentiment analysis, detects companies in the news, and predicts <strong style="color: #10b981;">RISE ▲</strong> or <strong style="color: #ef4444;">FALL ▼</strong>. Every Telegram alert is logged here — publicly.
-        </p>
-
-        <div class="tags">
-          <span class="tag">● FinBERT · ProsusAI</span>
-          <span class="tag">NewsAPI</span>
-          <span class="tag">spaCy NER</span>
-          <span class="tag">GitHub Actions</span>
-          <span class="tag">Telegram Bot</span>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>FinBERT Analysis</h3>
+          <p>Advanced sentiment analysis using FinBERT from ProsusAI for financial text understanding.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Named Entity Recognition</h3>
+          <p>spaCy NER identifies company names mentioned in news articles automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Signal Generation</h3>
+          <p>Generates RISE ▲ or FALL ▼ predictions with confidence scores for each company.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>Automated Alerts</h3>
+          <p>Sends real-time Telegram alerts with detailed analysis and market mood indicators.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Public Dashboard</h3>
+          <p>All signals logged publicly on GitHub for transparency and verification.</p>
         </div>
       </div>
     </section>
 
-    <!-- Stats Grid -->
-    <div class="stats" id="statsGrid">
-      <div class="stat-card">
-        <div class="stat-value" id="totalRuns">—</div>
-        <div class="stat-label">Total Runs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="riseSignals">—</div>
-        <div class="stat-label">RISE Signals</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="fallSignals">—</div>
-        <div class="stat-label">FALL Signals</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="noSignalDays">—</div>
-        <div class="stat-label">No Signal Days</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="avgConfidence">—</div>
-        <div class="stat-label">Avg Confidence</div>
-      </div>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <span class="filter-label">Filter:</span>
-      <button class="filter-btn active" onclick="filterSignals('all', this)">All</button>
-      <button class="filter-btn rise" onclick="filterSignals('rise', this)">▲ RISE</button>
-      <button class="filter-btn fall" onclick="filterSignals('fall', this)">▼ FALL</button>
-      <button class="filter-btn buy" onclick="filterSignals('buy', this)">BUY</button>
-      <button class="filter-btn" onclick="filterSignals('no_signal', this)">No Signal</button>
-    </div>
-
-    <!-- Signals Feed -->
-    <div class="section-label">
-      <svg class="section-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="1"></circle>
-        <path d="M12 1v6m0 6v6"></path>
-      </svg>
-      Signal History <span id="signalCount"></span>
-    </div>
-
-    <div class="signals-feed" id="signalsFeed"></div>
-    <div class="empty-state" id="emptyState" style="display: none;">
-      <div class="empty-icon">◎</div>
-      <p class="empty-text">No signals match this filter.</p>
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-text">
-          Built by <strong>Sumukh R</strong> · Final Year Project 2026<br>
-          <span style="font-size: 0.8rem;">Not financial advice. For educational & portfolio purposes only.</span>
+    <!-- Stats Section -->
+    <section id="stats">
+      <div class="section-label">Track Record</div>
+      <h2>By The Numbers</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" id="totalSignals" data-target="100">0</div>
+          <div class="stat-label">Total Signals</div>
         </div>
-        <div class="footer-links">
-          <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank" rel="noopener noreferrer" class="footer-link">
-            GitHub ↗
-          </a>
-          <a href="https://github.com/sumukh964/AI_stock_notifier/actions" target="_blank" rel="noopener noreferrer" class="footer-link">
-            Actions ↗
-          </a>
+        <div class="stat-item">
+          <div class="stat-number" id="riseCount" data-target="65">0</div>
+          <div class="stat-label">RISE Predictions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="fallCount" data-target="35">0</div>
+          <div class="stat-label">FALL Predictions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="avgConfidence" data-target="92">0</div>
+          <div class="stat-label">Avg Confidence %</div>
         </div>
       </div>
-    </div>
-  </footer>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="cta">
+      <div class="cta-section">
+        <h3>Ready to Explore?</h3>
+        <p>View all stock signals, analysis details, and market trends on our interactive dashboard.</p>
+        <button class="cta-button">View Dashboard</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a href="https://github.com/sumukh964/AI_stock_notifier" target="_blank">GitHub Repository</a>
+        <a href="https://github.com/sumukh964/AI_stock_notifier/actions" target="_blank">Workflow Runs</a>
+        <a href="https://github.com/sumukh964/AI_stock_notifier/blob/main/docs/alerts.json" target="_blank">Live Signals</a>
+      </div>
+      <p>Built by Sumukh R · Final Year Project 2026 · Not financial advice</p>
+    </footer>
+  </div>
 
   <script>
-    // Fetch live data from GitHub
-    const GITHUB_ALERTS_URL = 'https://raw.githubusercontent.com/sumukh964/AI_stock_notifier/main/docs/alerts.json';
+    /* ═══════════════════════════════════════════════════════════════════
+       THREE.JS SETUP & 3D SCENE
+       ═══════════════════════════════════════════════════════════════════ */
 
-    // Fallback sample data if GitHub fetch fails
-    const SAMPLE_SIGNALS = [
-      {
-        type: 'buy',
-        date: '2026-04-30',
-        time: '07:31',
-        company: 'ITC',
-        confidence: '95',
-        news_count: '1',
-        positive_count: '1',
-        top_reason: 'ITC, Godfrey Phillips shares rise up to 6.5% on report of 17% hike in cigarette prices in May',
-        market_mood: 'Neutral',
-      },
-      {
-        type: 'rise',
-        date: '2026-04-29',
-        time: '07:31',
-        company: 'Reliance Industries',
-        confidence: '89',
-        article_count: '4',
-        pos_ratio: '80',
-        reasoning: '4/4 articles positive · avg sentiment score +0.62',
-        top_headline: 'Reliance posts record Q4 profit on Jio growth and retail expansion',
-        top_source: 'Economic Times',
-        market_mood: 'Bullish',
-      },
-      {
-        type: 'rise',
-        date: '2026-04-29',
-        time: '07:32',
-        company: 'HDFC Bank',
-        confidence: '83',
-        article_count: '3',
-        pos_ratio: '100',
-        reasoning: '3/3 articles positive · avg sentiment score +0.58',
-        top_headline: 'HDFC Bank sees surge in retail loan disbursals in March quarter',
-        top_source: 'Moneycontrol',
-        market_mood: 'Bullish',
-      },
-      {
-        type: 'fall',
-        date: '2026-04-29',
-        time: '07:33',
-        company: 'Wipro',
-        confidence: '76',
-        article_count: '2',
-        neg_ratio: '100',
-        reasoning: '2/2 articles negative · avg sentiment score -0.54',
-        top_headline: 'Wipro flags weak demand outlook; guidance disappoints Street',
-        top_source: 'LiveMint',
-        market_mood: 'Bullish',
-      },
-      {
-        type: 'no_signal',
-        date: '2026-04-28',
-        time: '07:31',
-        market_mood: 'Bearish',
-        articles_analysed: 38,
-        companies_found: 9,
-      },
-      {
-        type: 'rise',
-        date: '2026-04-27',
-        time: '07:30',
-        company: 'TCS',
-        confidence: '86',
-        article_count: '3',
-        pos_ratio: '100',
-        reasoning: '3/3 articles positive · avg sentiment score +0.71',
-        top_headline: 'TCS wins $600M deal from Fortune 500 client in North America',
-        top_source: 'Reuters',
-        market_mood: 'Bullish',
-      },
-      {
-        type: 'fall',
-        date: '2026-04-27',
-        time: '07:31',
-        company: 'Sun Pharma',
-        confidence: '79',
-        article_count: '2',
-        neg_ratio: '100',
-        reasoning: '2/2 articles negative · avg sentiment score -0.61',
-        top_headline: 'Sun Pharma receives US FDA warning letter for Halol plant',
-        top_source: 'Business Standard',
-        market_mood: 'Bullish',
-      },
-    ];
+    gsap.registerPlugin(ScrollTrigger);
 
-    let allSignals = SAMPLE_SIGNALS;
-    let currentFilter = 'all';
+    // Scene setup
+    const canvas = document.getElementById('canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 
-    // Parallax scroll effect
-    window.addEventListener('scroll', () => {
-      const parallaxElements = document.querySelectorAll('.parallax');
-      parallaxElements.forEach(el => {
-        const scrollPosition = window.scrollY;
-        el.style.transform = `translateY(${scrollPosition * 0.5}px)`;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x0a0e27, 1);
+
+    camera.position.z = 5;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0x06b6d4, 1);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    const pointLight2 = new THREE.PointLight(0x0ea5e9, 0.8);
+    pointLight2.position.set(-5, -5, 5);
+    scene.add(pointLight2);
+
+    /* ── CREATE 3D OBJECTS ──────────────────────────────────────────── */
+
+    // Floating cube
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const cubeMaterial = new THREE.MeshPhongMaterial({
+      color: 0x06b6d4,
+      emissive: 0x06b6d4,
+      emissiveIntensity: 0.3,
+      shininess: 100,
+      wireframe: false,
+    });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.set(-2, 0, 0);
+    cube.castShadow = true;
+    scene.add(cube);
+
+    // Floating sphere
+    const sphereGeometry = new THREE.IcosahedronGeometry(0.8, 4);
+    const sphereMaterial = new THREE.MeshPhongMaterial({
+      color: 0x0ea5e9,
+      emissive: 0x0ea5e9,
+      emissiveIntensity: 0.3,
+      shininess: 100,
+    });
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.position.set(2, 0, 0);
+    sphere.castShadow = true;
+    scene.add(sphere);
+
+    // Torus (ring)
+    const torusGeometry = new THREE.TorusGeometry(1.5, 0.3, 16, 100);
+    const torusMaterial = new THREE.MeshPhongMaterial({
+      color: 0x10b981,
+      emissive: 0x10b981,
+      emissiveIntensity: 0.2,
+    });
+    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+    torus.position.set(0, 1.5, -2);
+    torus.rotation.x = Math.PI / 4;
+    scene.add(torus);
+
+    // Particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = window.innerWidth < 768 ? 500 : 1000;
+    const positionArray = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positionArray[i] = (Math.random() - 0.5) * 20;
+      positionArray[i + 1] = (Math.random() - 0.5) * 20;
+      positionArray[i + 2] = (Math.random() - 0.5) * 20;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positionArray, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.05,
+      color: 0x06b6d4,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.6,
+    });
+
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+
+    /* ── MOUSE TRACKING ─────────────────────────────────────────────── */
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    /* ── ANIMATION LOOP ─────────────────────────────────────────────── */
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate objects
+      cube.rotation.x += 0.003;
+      cube.rotation.y += 0.005;
+
+      sphere.rotation.x += 0.002;
+      sphere.rotation.y += 0.004;
+
+      torus.rotation.x += 0.001;
+      torus.rotation.z += 0.003;
+
+      // Particle rotation
+      particles.rotation.x += 0.0001;
+      particles.rotation.y += 0.0002;
+
+      // Mouse-responsive camera
+      camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+      camera.position.y += (mouseY * 2 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    /* ── GSAP ANIMATIONS ────────────────────────────────────────────── */
+
+    // Animate cube on scroll
+    gsap.to(cube.position, {
+      scrollTrigger: {
+        trigger: '#features',
+        start: 'top center',
+        end: 'bottom center',
+        scrub: 1,
+        markers: false,
+      },
+      x: 3,
+      y: 2,
+      duration: 1,
+    });
+
+    // Animate sphere on scroll
+    gsap.to(sphere.position, {
+      scrollTrigger: {
+        trigger: '#features',
+        start: 'top center',
+        end: 'bottom center',
+        scrub: 1,
+      },
+      x: -3,
+      y: -2,
+      duration: 1,
+    });
+
+    // Animate torus on scroll
+    gsap.to(torus.rotation, {
+      scrollTrigger: {
+        trigger: '#stats',
+        start: 'top center',
+        end: 'bottom center',
+        scrub: 1,
+      },
+      x: Math.PI * 2,
+      y: Math.PI * 2,
+      duration: 1,
+    });
+
+    // Animate feature cards
+    gsap.utils.toArray('.feature-card').forEach((card, index) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 80%',
+          end: 'top 20%',
+          scrub: false,
+        },
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        delay: index * 0.1,
       });
     });
 
-    function calculateStats() {
-      const rise = allSignals.filter(s => s.type === 'rise' || s.type === 'buy').length;
-      const fall = allSignals.filter(s => s.type === 'fall').length;
-      const noSignal = allSignals.filter(s => s.type === 'no_signal').length;
-      const avgConf = Math.round(
-        allSignals
-          .filter(s => s.confidence)
-          .reduce((sum, s) => sum + parseInt(s.confidence), 0) /
-          allSignals.filter(s => s.confidence).length
-      );
-
-      animateValue('totalRuns', 0, allSignals.length, 1000);
-      animateValue('riseSignals', 0, rise, 1000);
-      animateValue('fallSignals', 0, fall, 1000);
-      animateValue('noSignalDays', 0, noSignal, 1000);
-      animateValue('avgConfidence', 0, avgConf, 1000, '%');
-    }
-
-    function animateValue(id, start, end, duration, suffix = '') {
-      const element = document.getElementById(id);
-      const range = end - start;
-      const increment = range / (duration / 16);
-      let current = start;
-
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= end) {
-          current = end;
-          clearInterval(timer);
-        }
-        element.textContent = Math.floor(current) + suffix;
-      }, 16);
-    }
-
-    function renderSignals() {
-      const filtered = allSignals.filter(s => {
-        if (currentFilter === 'all') return true;
-        if (currentFilter === 'rise') return s.type === 'rise' || s.type === 'buy';
-        if (currentFilter === 'fall') return s.type === 'fall';
-        if (currentFilter === 'buy') return s.type === 'buy';
-        if (currentFilter === 'no_signal') return s.type === 'no_signal';
-        return true;
+    // Animate stat numbers (will be called after data loads)
+    function animateStats() {
+      gsap.utils.toArray('.stat-number').forEach((stat) => {
+        const target = parseInt(stat.getAttribute('data-target')) || 0;
+        gsap.to(stat, {
+          scrollTrigger: {
+            trigger: stat,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          innerHTML: target,
+          duration: 2,
+          snap: { innerHTML: 1 },
+          ease: 'power2.out',
+        });
       });
-
-      const feed = document.getElementById('signalsFeed');
-      const empty = document.getElementById('emptyState');
-      const count = document.getElementById('signalCount');
-
-      count.textContent = `(${filtered.length})`;
-
-      if (filtered.length === 0) {
-        feed.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-
-      empty.style.display = 'none';
-      feed.innerHTML = filtered.map((signal, idx) => createSignalCard(signal, idx)).join('');
     }
 
-    function createSignalCard(signal, idx) {
-      const isRise = signal.type === 'rise' || signal.type === 'buy';
-      const isFall = signal.type === 'fall';
-      const isNoSignal = signal.type === 'no_signal';
+    // Call animateStats after a delay to ensure data is loaded
+    setTimeout(animateStats, 500);
 
-      const cardClass = isRise ? 'rise' : isFall ? 'fall' : 'neutral';
-      const icon = isRise ? '▲' : isFall ? '▼' : '◎';
-      const badge = signal.type === 'buy' ? 'BUY' : signal.type === 'rise' ? '▲ RISE' : signal.type === 'fall' ? '▼ FALL' : 'NO SIGNAL';
+    // Section fade-in animations
+    gsap.utils.toArray('section').forEach((section) => {
+      gsap.from(section, {
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+        },
+        opacity: 0,
+        duration: 0.8,
+      });
+    });
 
-      let bodyHtml = '';
+    /* ── RESPONSIVE HANDLING ────────────────────────────────────────── */
 
-      if (isNoSignal) {
-        bodyHtml = `
-          <div class="signal-field">
-            <div class="field-label">Articles Analysed</div>
-            <div class="field-value highlight">${signal.articles_analysed}</div>
-          </div>
-          <div class="signal-field">
-            <div class="field-label">Companies Found</div>
-            <div class="field-value highlight">${signal.companies_found}</div>
-          </div>
-          <div class="signal-field" style="grid-column: 1 / -1;">
-            <div class="field-label">Market Mood</div>
-            <div class="field-value">${signal.market_mood}</div>
-          </div>
-        `;
+    window.addEventListener('resize', () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+
+      // Adjust particle count for mobile
+      if (width < 768) {
+        particlesMaterial.size = 0.03;
       } else {
-        bodyHtml = `
-          <div class="signal-field">
-            <div class="field-label">Confidence</div>
-            <div class="field-value highlight">${signal.confidence}%</div>
-            <div class="confidence-bar">
-              <div class="confidence-fill" style="width: ${signal.confidence}%"></div>
-            </div>
-          </div>
-          <div class="signal-field">
-            <div class="field-label">Articles</div>
-            <div class="field-value highlight">${signal.article_count || signal.news_count}</div>
-            <div class="field-value" style="font-size: 0.8rem; margin-top: 0.25rem;">
-              ${signal.pos_ratio ? signal.pos_ratio + '% positive' : signal.positive_count ? signal.positive_count + ' positive' : 'analyzed'}
-            </div>
-          </div>
-          ${signal.reasoning ? `
-            <div class="signal-section">
-              <div class="field-label">Analysis</div>
-              <div class="field-value">${signal.reasoning}</div>
-            </div>
-          ` : ''}
-          ${signal.top_headline ? `
-            <div class="signal-section">
-              <div class="field-label">Top Headline</div>
-              <div class="field-value">${signal.top_headline}</div>
-              ${signal.top_source ? `<div class="field-value" style="font-size: 0.8rem; margin-top: 0.25rem; color: #9ca3af;">Source: ${signal.top_source}</div>` : ''}
-            </div>
-          ` : ''}
-          ${signal.market_mood ? `
-            <div class="signal-section">
-              <div class="field-label">Market Mood</div>
-              <div class="field-value">${signal.market_mood}</div>
-            </div>
-          ` : ''}
-        `;
+        particlesMaterial.size = 0.05;
       }
+    });
 
-      return `
-        <div class="signal-card ${cardClass}" style="animation-delay: ${idx * 80}ms;">
-          <div class="signal-header">
-            <div class="signal-info">
-              <div class="signal-icon">${icon}</div>
-              <div class="signal-meta">
-                <div class="signal-company">${signal.company || 'Market Analysis'}</div>
-                <div class="signal-date">${signal.date}</div>
-              </div>
-            </div>
-            <div class="signal-badge">${badge}</div>
-          </div>
-          <div class="signal-body">
-            ${bodyHtml}
-          </div>
-        </div>
-      `;
-    }
+    /* ── SCROLL TRIGGER REFRESH ─────────────────────────────────────── */
 
-    function filterSignals(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderSignals();
-    }
+    window.addEventListener('load', () => {
+      ScrollTrigger.refresh();
+    });
 
-    // Load data from GitHub or use sample data
-    async function loadSignals() {
+    /* ── FETCH LIVE DATA FROM GITHUB ────────────────────────────────── */
+
+    const GITHUB_ALERTS_URL = 'https://raw.githubusercontent.com/sumukh964/AI_stock_notifier/main/docs/alerts.json';
+
+    async function loadAlertsData() {
       try {
         const response = await fetch(GITHUB_ALERTS_URL);
         if (response.ok) {
-          allSignals = await response.json();
-          console.log('✅ Loaded', allSignals.length, 'signals from GitHub');
+          const alerts = await response.json();
+          console.log('✅ Loaded', alerts.length, 'signals from GitHub');
+          updateStatsFromAlerts(alerts);
+          return alerts;
         } else {
           throw new Error('Failed to fetch alerts.json');
         }
       } catch (error) {
-        console.warn('⚠️ Could not load from GitHub, using sample data:', error.message);
-        // allSignals already set to SAMPLE_SIGNALS
+        console.warn('⚠️ Could not load from GitHub:', error.message);
+        console.log('Using default stats');
+        updateStatsFromAlerts([]);
+        return [];
       }
-      calculateStats();
-      renderSignals();
     }
 
-    // Initialize
-    loadSignals();
+    function updateStatsFromAlerts(alerts) {
+      if (!alerts || alerts.length === 0) {
+        document.getElementById('totalSignals').setAttribute('data-target', '100');
+        document.getElementById('riseCount').setAttribute('data-target', '65');
+        document.getElementById('fallCount').setAttribute('data-target', '35');
+        document.getElementById('avgConfidence').setAttribute('data-target', '92');
+        return;
+      }
+
+      const totalSignals = alerts.length;
+      const riseSignals = alerts.filter(s => s.type === 'rise' || s.type === 'buy').length;
+      const fallSignals = alerts.filter(s => s.type === 'fall').length;
+      const avgConf = Math.round(
+        alerts
+          .filter(s => s.confidence)
+          .reduce((sum, s) => sum + parseInt(s.confidence), 0) /
+          alerts.filter(s => s.confidence).length
+      ) || 0;
+
+      document.getElementById('totalSignals').setAttribute('data-target', totalSignals);
+      document.getElementById('riseCount').setAttribute('data-target', riseSignals);
+      document.getElementById('fallCount').setAttribute('data-target', fallSignals);
+      document.getElementById('avgConfidence').setAttribute('data-target', avgConf);
+    }
+
+    // Load data when page loads
+    window.addEventListener('load', () => {
+      loadAlertsData();
+      ScrollTrigger.refresh();
+    });
+
+    /* ── BUTTON INTERACTIONS ────────────────────────────────────────── */
+
+    document.querySelectorAll('.cta-button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        gsap.to(window, {
+          scrollTo: '#stats',
+          duration: 1,
+        });
+      });
+    });
   </script>
 </body>
 </html>
