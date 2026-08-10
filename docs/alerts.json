@@ -1,5 +1,57 @@
 [
   {
+    "type": "rise",
+    "date": "2026-08-10",
+    "time": "03:55",
+    "company": "Rs 6,000",
+    "confidence": "91",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 91%",
+    "top_headline": "Titan: Motilal Oswal retains 'Buy', target at Rs 6,000; jewelry EBIT jumps 41%",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-10",
+    "time": "03:55",
+    "company": "Sensex, Nifty",
+    "confidence": "92",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 92%",
+    "top_headline": "GIFT Nifty signals steady start for Sensex, Nifty; Asian markets rise after Wall Street rally, oil gains",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-10",
+    "time": "03:55",
+    "company": "GIFT Nifty",
+    "confidence": "92",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 92%",
+    "top_headline": "GIFT Nifty signals steady start for Sensex, Nifty; Asian markets rise after Wall Street rally, oil gains",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-10",
+    "time": "03:55",
+    "company": "NIM",
+    "confidence": "94",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 94%",
+    "top_headline": "SBI stock gains over 1%, top Nifty gainer after Q1 beat; brokerages bullish as NIM, loan growth improve",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
     "type": "fall",
     "date": "2026-08-09",
     "time": "03:43",
