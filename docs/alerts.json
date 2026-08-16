@@ -1,5 +1,11 @@
 [
   {
+    "type": "no_signal",
+    "date": "2026-08-16",
+    "time": "03:00",
+    "market_mood": "Unknown"
+  },
+  {
     "type": "rise",
     "date": "2026-08-15",
     "time": "02:53",
