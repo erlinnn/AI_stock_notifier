@@ -1,5 +1,57 @@
 [
   {
+    "type": "fall",
+    "date": "2026-08-24",
+    "time": "03:03",
+    "company": "Trump",
+    "confidence": "75",
+    "article_count": "2",
+    "neg_ratio": "100",
+    "reasoning": "2/2 negative \u00b7 avg score -0.56",
+    "top_headline": "Bessent\u2019s \u2018Treasury twist\u2019 fails to tame bond yields as markets defy Trump administration",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "fall",
+    "date": "2026-08-24",
+    "time": "03:03",
+    "company": "Bessent\u2019s \u2018Treasury",
+    "confidence": "84",
+    "article_count": "1",
+    "neg_ratio": "100",
+    "reasoning": "Strong negative signal \u00b7 confidence 84%",
+    "top_headline": "Bessent\u2019s \u2018Treasury twist\u2019 fails to tame bond yields as markets defy Trump administration",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-24",
+    "time": "03:03",
+    "company": "Smallcap",
+    "confidence": "87",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 87%",
+    "top_headline": "Broader indices outperform; Smallcap index scales fresh high",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-24",
+    "time": "03:03",
+    "company": "Caplin Point Laboratories",
+    "confidence": "88",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 88%",
+    "top_headline": "Caplin Point Laboratories shares in focus post 10 observations from USFDA",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
     "type": "rise",
     "date": "2026-08-23",
     "time": "03:02",
