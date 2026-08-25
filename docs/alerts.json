@@ -1,5 +1,57 @@
 [
   {
+    "type": "rise",
+    "date": "2026-08-25",
+    "time": "02:58",
+    "company": "Rs 2,700",
+    "confidence": "91",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 91%",
+    "top_headline": "Ratnamani Metals & Tubes shares surge 18% on bagging export orders worth Rs 2,700 crore",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-08-25",
+    "time": "02:58",
+    "company": "Ratnamani Metals & Tubes",
+    "confidence": "91",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 91%",
+    "top_headline": "Ratnamani Metals & Tubes shares surge 18% on bagging export orders worth Rs 2,700 crore",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "fall",
+    "date": "2026-08-25",
+    "time": "02:58",
+    "company": "Sensex, Nifty",
+    "confidence": "94",
+    "article_count": "1",
+    "neg_ratio": "100",
+    "reasoning": "Strong negative signal \u00b7 confidence 94%",
+    "top_headline": "GIFT Nifty signals weak start for Sensex, Nifty; Asian losses, Wall Street decline weigh on sentiment",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "fall",
+    "date": "2026-08-25",
+    "time": "02:58",
+    "company": "GIFT Nifty",
+    "confidence": "94",
+    "article_count": "1",
+    "neg_ratio": "100",
+    "reasoning": "Strong negative signal \u00b7 confidence 94%",
+    "top_headline": "GIFT Nifty signals weak start for Sensex, Nifty; Asian losses, Wall Street decline weigh on sentiment",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
     "type": "fall",
     "date": "2026-08-24",
     "time": "03:03",
