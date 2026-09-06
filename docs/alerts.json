@@ -1,5 +1,31 @@
 [
   {
+    "type": "rise",
+    "date": "2026-09-06",
+    "time": "06:54",
+    "company": "Abhishek Banerjee",
+    "confidence": "93",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 93%",
+    "top_headline": "Daily Voice: Lotusdew's Abhishek Banerjee expects Nifty to end year at record high, sees opportunity in longer-dated US bonds",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
+    "type": "rise",
+    "date": "2026-09-06",
+    "time": "06:54",
+    "company": "Lotusdew",
+    "confidence": "93",
+    "article_count": "1",
+    "pos_ratio": "100",
+    "reasoning": "Strong positive signal \u00b7 confidence 93%",
+    "top_headline": "Daily Voice: Lotusdew's Abhishek Banerjee expects Nifty to end year at record high, sees opportunity in longer-dated US bonds",
+    "top_source": "Moneycontrol",
+    "market_mood": "Neutral"
+  },
+  {
     "type": "no_signal",
     "date": "2026-09-05",
     "time": "06:44",
